@@ -6,7 +6,7 @@ from pid import PID
 from plotter import Plotter
 
 
-class SimulationConfig:
+class SimulatorConfig:
     ScreenWidth = 402
     ScreenHeight = 720
     Setpoint = 0
@@ -55,16 +55,17 @@ class PIDConfig:
     Max = 15
 
 
-class Simulation:
+class Simulator:
     def __init__(self):
         self.__screen = turtle.Screen()
         self.__screen._root.protocol("WM_DELETE_WINDOW", self.__quit)
-        self.__screen.setup(SimulationConfig.ScreenWidth, SimulationConfig.ScreenHeight)
+        self.__screen.title("Simulator")
+        self.__screen.setup(SimulatorConfig.ScreenWidth, SimulatorConfig.ScreenHeight)
         self.__turtle = turtle.Turtle()
 
         self.__rocket = Rocket(
             RocketConfig.Mass,
-            RocketConfig.MarkerSize - (SimulationConfig.ScreenHeight / 2),
+            RocketConfig.MarkerSize - (SimulatorConfig.ScreenHeight / 2),
         )
 
         self.__pid = PID(
@@ -91,7 +92,7 @@ class Simulation:
         self.__turtle.hideturtle()
         self.__turtle.penup()
         self.__turtle.goto(
-            -int(self.__screen.window_width() / 2), SimulationConfig.Setpoint
+            -int(self.__screen.window_width() / 2), SimulatorConfig.Setpoint
         )
         self.__turtle.color("red")
 
@@ -103,7 +104,7 @@ class Simulation:
 
     def __render(self, dt):
         thrust = self.__pid.compute(
-            self.__rocket.altitude, SimulationConfig.Setpoint, dt
+            self.__rocket.altitude, SimulatorConfig.Setpoint, dt
         )
         self.__rocket.update(thrust, dt)
         self.__plotter.append(
@@ -119,12 +120,13 @@ class Simulation:
 
         while self.__running:
             now = time.time()
-            self.__render(SimulationConfig.DT if SimulationConfig.DT else now - last)
+            self.__render(SimulatorConfig.DT if SimulatorConfig.DT else now - last)
             last = now
 
         self.__screen.mainloop()
         self.__plotter.draw()
 
 
-sim = Simulation()
-sim.run()
+if __name__ == "__main__":
+    sim = Simulator()
+    sim.run()

@@ -37,7 +37,8 @@ class Plotter:
             self.__item[i].append(data[i])
 
     def draw(self):
-        _, axis = plt.subplots(len(self.__item), sharex=True)
+        fig, axis = plt.subplots(len(self.__item), sharex=True)
+        fig.canvas.manager.set_window_title("Plotter")
 
         for i in range(len(axis)):
             axis[i].set(ylabel=self.__item[i].label)
